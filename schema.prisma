@@ -1,0 +1,25 @@
+datasource postgres {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator nexusPrisma {
+   provider = "nexus-prisma"
+}
+
+model PackageType {
+    id String @id @default(uuid())
+    name String
+    components Component[]
+}
+
+model Component {
+    id String @id @default(uuid())
+    name String
+    packageType PackageType @relation(fields: [packageTypeID], references: [id])
+    packageTypeID String
+}
