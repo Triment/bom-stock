@@ -28,6 +28,11 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  Component: { // root type
+    id: string; // ID!
+    name: string; // String!
+  }
+  Mutation: {};
   PackageType: { // root type
     id: string; // ID!
     name: string; // String!
@@ -46,26 +51,47 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  Component: { // field return type
+    id: string; // ID!
+    name: string; // String!
+  }
+  Mutation: { // field return type
+    createPack: NexusGenRootTypes['PackageType']; // PackageType!
+  }
   PackageType: { // field return type
     id: string; // ID!
     name: string; // String!
   }
   Query: { // field return type
+    components: Array<NexusGenRootTypes['Component'] | null> | null; // [Component]
     packages: Array<NexusGenRootTypes['PackageType'] | null> | null; // [PackageType]
   }
 }
 
 export interface NexusGenFieldTypeNames {
+  Component: { // field return type name
+    id: 'ID'
+    name: 'String'
+  }
+  Mutation: { // field return type name
+    createPack: 'PackageType'
+  }
   PackageType: { // field return type name
     id: 'ID'
     name: 'String'
   }
   Query: { // field return type name
+    components: 'Component'
     packages: 'PackageType'
   }
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    createPack: { // args
+      name: string; // String!
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {

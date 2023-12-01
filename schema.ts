@@ -1,4 +1,4 @@
-import { makeSchema, objectType, queryType, mutationType } from 'nexus'
+import { makeSchema, objectType, queryType, mutationType, extendType, nonNull, stringArg } from 'nexus'
 import { PackageType, Component } from 'nexus-prisma'
 import { join } from 'path'
 import { Context } from './Context'
@@ -8,13 +8,6 @@ const schema = makeSchema({
     definition(t) {
         t.field('id', PackageType.id)
         t.field('name', PackageType.name)
-        t.list.field('components', {
-            type: 'Component',
-            async resolve(_, args, ctx: Context) {
-                return await ctx.prisma.component.findMany()
-            }
-        })
-        t.
     },
   }),
   objectType({
@@ -35,16 +28,28 @@ const schema = makeSchema({
             async resolve(_, args, ctx: Context) {
                 return await ctx.prisma.component.findMany()
             },
-            type: 'PackageType'
+            type: 'Component'
         })
+    },
+  }),extendType({
+    type: 'Mutation',
+    definition(t) {
+      t.nonNull.field("createPack", {
+        type: 'PackageType',
+        args: {
+          name: nonNull(stringArg())
+        },
+        async resolve(_, {name}, ctx: Context){
+          return await ctx.prisma.packageType.create({ data: {name} })
+        }
+      })
     },
   })],
   outputs: {
-    schema: import.meta.dir + '/../../schema.graphql',
+    schema: import.meta.dir + '/schema.graphql',
     typegen: import.meta.dir + '/generated/nexus.ts',
   },
   contextType: { module: join(import.meta.dir, 'Context.ts'), export: 'Context'}
-  // 其他配置...
 })
 
 export default schema
